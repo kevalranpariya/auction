@@ -3,6 +3,6 @@ import { AuthController } from '../controller';
 
 export default (route:Router):Router=>{
   const authController = new AuthController();
-  route.get('/register',authController.register);
+  route.post('/register',authController.register);
   return route;
 };
