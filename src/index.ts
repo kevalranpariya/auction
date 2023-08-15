@@ -3,7 +3,12 @@ import { config } from 'dotenv';
 import './config/sequelize';
 import './models/User';
 import Routes from './routes';
-
+import errorHandling from './middleware/errorHandling';
+// import './config/email';
+import './middleware/authPassport';
+import passport from 'passport';
+import './config/cloudinary';
+import fileUpload from 'express-fileupload';
 const { SERVER_IP,PORT }:any = process.env;
 config();
 class Server{
@@ -11,8 +16,14 @@ class Server{
   constructor(){
     this.server = express();
     this.server.use(urlencoded({ extended: true }));
+    this.server.use(passport.initialize());
+    // this.server.use(fileUpload());
     Routes(this.server);
-    this.server.listen(PORT,SERVER_IP);
+    this.server.use(errorHandling);
+    this.server.listen(PORT,SERVER_IP,()=>{
+      console.log('server is start');
+
+    });
   }
 }
 

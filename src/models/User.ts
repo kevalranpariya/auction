@@ -1,6 +1,7 @@
 import { DataTypes, Model } from 'sequelize';
 import sequelize from '../config/sequelize';
 import { hashSync } from 'bcrypt';
+import multer from 'multer';
 
 class User extends Model{
   declare id:number;
@@ -13,6 +14,8 @@ class User extends Model{
   declare avatar:string;
   declare role:string;
   declare payment:string;
+  declare token:string;
+  declare upload:any;
 }
 
 User.init({
@@ -26,7 +29,7 @@ User.init({
     type: DataTypes.STRING(30),
     allowNull: false,
     unique: {
-      name: '',
+      name: 'UsernameUniqueConstraint',
       msg: 'Username must be unique'
     }
   },
@@ -34,7 +37,7 @@ User.init({
     type: DataTypes.STRING(30),
     allowNull: false,
     unique: {
-      name: '',
+      name: 'EmailUniqueConstraint',
       msg: 'Email address must be unique',
     },
     validate: {
@@ -59,6 +62,13 @@ User.init({
   },
   number: {
     type: DataTypes.BIGINT,
+    validate: {
+      set(value:any) {
+        if (value.toString().length !== 10) {
+          throw new Error('Number must be exactly 10 digits.');
+        }
+      },
+    }
   },
   avatar: DataTypes.STRING(),
   role: {
@@ -68,10 +78,22 @@ User.init({
   payment: {
     type: DataTypes.ENUM,
     values: [ 'UPI','credit cards',' debit cards','PayPal' ]
+  },
+  token: {
+    type: DataTypes.STRING
   }
 },{
   sequelize,
   tableName: 'User'
 });
+
+const storage = multer.diskStorage({
+  filename: (req,file,cb)=>{
+    cb(null,file.path+ '/'+file.originalname);
+  },
+});
+const upload = multer({ storage: storage }).single('file');
+
+User.prototype.upload = upload;
 
 export default User;
