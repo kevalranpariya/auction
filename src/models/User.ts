@@ -1,7 +1,6 @@
 import { DataTypes, Model } from 'sequelize';
 import sequelize from '../config/sequelize';
 import { hashSync } from 'bcrypt';
-import multer from 'multer';
 
 class User extends Model{
   declare id:number;
@@ -15,7 +14,6 @@ class User extends Model{
   declare role:string;
   declare payment:string;
   declare token:string;
-  declare upload:any;
 }
 
 User.init({
@@ -62,6 +60,10 @@ User.init({
   },
   number: {
     type: DataTypes.BIGINT,
+    unique: {
+      name: 'numberUniqueConstraint',
+      msg: 'Number already exits'
+    },
     validate: {
       set(value:any) {
         if (value.toString().length !== 10) {
@@ -86,14 +88,5 @@ User.init({
   sequelize,
   tableName: 'User'
 });
-
-const storage = multer.diskStorage({
-  filename: (req,file,cb)=>{
-    cb(null,file.path+ '/'+file.originalname);
-  },
-});
-const upload = multer({ storage: storage }).single('file');
-
-User.prototype.upload = upload;
 
 export default User;

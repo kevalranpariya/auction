@@ -1,14 +1,15 @@
 import { Request, Response, NextFunction } from 'express';
 import User from '../models/User';
 import { SUCCESS } from '../middleware/responseHandling';
-import cloudInary from '../config/cloudinary';
+import { v2 as cloudInary } from 'cloudinary';
+import Auction from '../models/Auction';
 
 export default class UserController{
 
   userProfile =async (req:Request,res:Response,next:NextFunction) => {
     try {
       const { id }:number | any = req.user;
-      const userDetail = await User.findByPk(id,{ attributes: [ 'id','username','role','email','number' ] });
+      const userDetail = await User.findByPk(id,{ attributes: [ 'id','username','role','email' ] });
       return SUCCESS(req,res,userDetail);
     } catch (err) {
       return next(err);
@@ -17,22 +18,50 @@ export default class UserController{
 
   profileUpdate =async (req:Request,res:Response,next:NextFunction) => {
     try {
-      console.log(req.body);
-    //   console.log((req.files as { fil: File }).fil);
-    console.log(req.files)
-
-      // console.log(req)
-    //   const name = req.files;
-    //   const result = cloudInary.uploader.upload(req.files);
-    //   const { id }:number | any = req.user;
-    //   await User.update(req.body,{
-    //     where: {
-    //       id
-    //     }
-    //   });
-    //   return SUCCESS(req,res);
+      // console.log(req.file)
+      if(req.file){
+        req.body.avatar = req.file.path;
+      }
+      const { id }:number | any = req.user;
+      await User.update(req.body,{
+        where: {
+          id
+        }
+      });
+      return SUCCESS(req,res);
     } catch (err) {
       return next(err);
     }
+  };
+
+  deleteProfile =async (req:Request,res:Response,next:NextFunction) => {
+    try {
+      // const { id }:number| any = req.user;
+      // const findUser = await User.findByPk(id);
+      // const avatar = findUser?.avatar;
+      // if(avatar){
+      //   // const imageURL = await avatar.split('/');
+      //   // const publicID = imageURL[imageURL.length-1];
+      // }
+      // await cloudInary.uploader.destroy('upload/v1692078600/hi0ypdgyxfavyrzq7unc.png');
+      // await User.destroy({
+      //   where: {
+      //     id: id
+      //   }
+      // });
+      return SUCCESS(req,res);
+    } catch (err) {
+      return next(err);
+    }
+  };
+
+  allAuctionItem =async (req:Request,res:Response,next:NextFunction) => {
+    try {
+      const allItem = await Auction.findAll({});
+      return SUCCESS(req,res,allItem);
+    } catch (err) {
+      return next(err);
+    }
+
   };
 }
