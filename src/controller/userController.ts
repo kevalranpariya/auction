@@ -43,7 +43,7 @@ export default class UserController{
       //   // const imageURL = await avatar.split('/');
       //   // const publicID = imageURL[imageURL.length-1];
       // }
-      // await cloudInary.uploader.destroy('upload/v1692078600/hi0ypdgyxfavyrzq7unc.png');
+
       // await User.destroy({
       //   where: {
       //     id: id

@@ -9,8 +9,10 @@ import passport from 'passport';
 import './config/cloudinary';
 import './models/Auction';
 import './utils/dateFormat';
-import nodes from './middleware/nodeSchedule';
-nodes();
+import autoSchedule from './middleware/autoSchedule';
+import './models/Bid';
+autoSchedule();
+
 const { SERVER_IP,PORT }:any = process.env;
 config();
 class Server{

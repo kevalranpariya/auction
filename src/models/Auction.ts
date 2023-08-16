@@ -3,6 +3,7 @@ import { DataTypes, Model } from 'sequelize';
 import User from './User';
 
 class Auction extends Model{
+  declare id:number;
   declare name:string;
   declare description:string;
   declare starting_bid:number;
@@ -11,6 +12,8 @@ class Auction extends Model{
   declare time_start:string;
   declare time_end:string;
   declare images:string[];
+  declare highest_bid:number;
+  declare minimum_increment:number;
 }
 
 Auction.init({
@@ -41,10 +44,16 @@ Auction.init({
   },
   images: {
     type: DataTypes.ARRAY(DataTypes.STRING),
+  },
+  highest_bid: {
+    type: DataTypes.INTEGER,
+  },
+  minimum_increment: {
+    type: DataTypes.INTEGER
   }
 },{
   sequelize,
-  tableName: 'Auction'
+  tableName: 'Auction',
 });
 
 User.hasMany(Auction,{
