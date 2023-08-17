@@ -8,6 +8,6 @@ export default (route:Router):Router=>{
   route.get('/profile',checkRole([ 'User','Seller' ]), userController.userProfile);
   route.put('/profileUpdate',checkRole([ 'User','Seller' ]),upload.single('avatar'),userController.profileUpdate);
   route.delete('/deleteProfile',checkRole([ 'User','Seller' ]), userController.deleteProfile);
-  route.get('/allAuctionItem', checkRole(['User']),userController.allAuctionItem);
+  route.get('/allAuctionItem',userController.allAuctionItem);
   return route;
 };

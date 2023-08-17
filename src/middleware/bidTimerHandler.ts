@@ -1,6 +1,8 @@
 import moment from 'moment';
 import Auction from '../models/Auction';
+// import { EventEmitter } from 'events';
 
+// const emitter = new EventEmitter();
 let setTimer:NodeJS.Timeout;
 
 export const setBidTimer = (itemID:number)=>{
@@ -29,3 +31,9 @@ export const itemTimeIncrease = async(time_end:string,itemID:number)=>{
     return await Auction.update({ time_end: timeIncrease }, { where: { id: itemID }});
   }
 };
+
+// emitter.emit('notification','Time increase');
+
+// setTimeout(()=>{
+//   emitter.emit('notification','Time increase');
+// },1000);

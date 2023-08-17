@@ -11,21 +11,37 @@ import './models/Auction';
 import './utils/dateFormat';
 import autoSchedule from './middleware/autoSchedule';
 import './models/Bid';
+import SocketIO from './socket.io';
+import { createServer,Server } from 'node:http';
+import cors from 'cors';
+import path from 'node:path';
 autoSchedule();
+// import { EventEmitter } from 'events';
 
+// const emitter = new EventEmitter();
+// emitter.emit('notification','Time increase');
+// emitter.on('notification',(mes:any)=>{
+//   console.log('messs');
+// });
 const { SERVER_IP,PORT }:any = process.env;
 config();
-class Server{
+class app{
   private server:Express;
+  declare app:Server;
   constructor(){
     this.server = express();
+    this.app = createServer(this.server);
+    SocketIO(this.app);
+    this.server.set('view engine','ejs');
+    this.server.set('views', path.join(__dirname, 'views'));
+    this.server.use(cors());
     this.server.use(json());
     this.server.use(urlencoded({ extended: true }));
     this.server.use(passport.initialize());
     Routes(this.server);
     this.server.use(errorHandling);
-    this.server.listen(PORT,SERVER_IP);
+    this.app.listen(PORT,SERVER_IP);
   }
 }
 
-new Server();
+new app();
