@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Auction Items</title>
+      <style>
+        .chat-container {
+            height: calc(100vh - 200px); /* Adjust the value to leave space for auction items and input field */
+            max-height: calc(100vh - 200px);
+            border: 1px solid #ccc;
+            padding: 10px;
+            overflow-y: scroll;
+        }
+    </style>
+    <!-- Link Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container-fluid mt-5">
+        <div>
+            <input type="text" id="itemID">
+            <input type="submit" onclick="getItemID()" value="Item nu">
+        </div>
+        <div class="row">
+            <div class="col-md-8">
+                <h2>Auction Items</h2>
+                <ul class="list-group" id="auctionItemList">
+                    <!-- ... (auction items list) ... -->
+                </ul>
+            </div>
+            <div class="col-md-4 chat-column">
+                <div class="chat-box">
+                    <div class="chat-container" id="chatContainer">
+                        <!-- Chat messages will be displayed here -->
+                    </div>
+                    <form id="chatForm" class="chat-form">
+                        <div class="input-group">
+                            <input type="text" class="form-control" id="message" placeholder="Type a message..." required>
+                            <div class="input-group-append">
+                                <button type="submit" class="btn btn-primary">Send</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Link Bootstrap JS (Popper.js and Bootstrap scripts) -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <!-- Link Socket.io client script -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.1.2/socket.io.js"></script>
+    <script>
+        // Fetch and display auction item data
+        async function fetchAuctionItemData(itemID) {
+            try {
+                const token = localStorage.getItem('authToken');
+                const headers = new Headers();
+                headers.append("Authorization", `Bearer ${token}`);
+                const response = await fetch(`http://192.168.2.35:4600/user/auctionItem/${itemID}`, {
+                    method: "GET",
+                    headers: headers
+                });
+                const auctionItemData = await response.json();
+                console.log(auctionItemData)
+                const auctionItemList = document.getElementById("auctionItemList");
+                socket.emit('joinRoom', auctionItemData.data.id);
+                auctionItemList.innerHTML = ""; // Clear previous data
+                    const listItem = document.createElement("li");
+                    listItem.className = "list-group-item";
+                     listItem.innerHTML = `
+                        <h4>${auctionItemData.data.name}</h4>
+                        <p>${auctionItemData.data.description}</p>
+                        <p>Highest Bid: ${auctionItemData.data.highest_bid}</p>
+                        <p>Time Remaining: ${auctionItemData.data.time_end}</p>
+                    `;
+                    auctionItemList.appendChild(listItem);
+                    return auctionItemData.data.id
+            } catch (error) {
+                console.error("An error occurred:", error);
+            }
+        }
+       
+         function displayMessage(message) {
+            const chatContainer = document.getElementById("chatContainer");
+            const messageElement = document.createElement("div");
+            messageElement.innerText = message;
+            chatContainer.appendChild(messageElement);
+            chatContainer.scrollTop = chatContainer.scrollHeight; // Scroll to the bottom
+        }
+        const token = localStorage.getItem('authToken');
+        // Connect to Socket.io server
+        const socket = io("/auction",{
+            transportOptions: {
+               polling: {
+                  extraHeaders: {
+                Authorization: `Bearer ${token}`
+                  }
+            }
+        }}); // Replace with your server URL
+        // socket.emit('joinRoom', auctionItemData.data.id);
+        socket.on("connects", () => {
+            displayMessage("Connected to chat");
+        });
+        
+        socket.on("userJoined", (username) => {
+            displayMessage(`${username} joined the chat`);
+        });
+
+        socket.on('notification',(message)=>{
+            displayMessage(message);
+        })
+
+        socket.on("NewMessage", (message) => {
+            displayMessage(message);
+        });
+
+        socket.on('itemSold',(message)=>{
+            displayMessage(message);
+        })
+        
+        // socket.on("message", (data) => {
+        //     displayMessage(`${data.username}: ${data.message}`);
+        // });
+        const chatForm = document.getElementById("chatForm");
+        const messageInput = document.getElementById("message");
+        var item = 0;
+        console.log(item)
+        chatForm.addEventListener("submit", (event) => {
+            event.preventDefault();
+            const message = messageInput.value;
+            if (message.trim() !== "") {
+                socket.emit("sendMessage", item, message );
+                messageInput.value = "";
+            }
+        });
+        function getItemID(){
+            let itemID = document.getElementById('itemID').value;
+            item = itemID;
+            fetchAuctionItemData(itemID)
+            document.getElementById('itemID').value = '';
+        }
+    </script>
+</body>
+</html>

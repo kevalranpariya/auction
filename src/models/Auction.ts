@@ -14,6 +14,9 @@ class Auction extends Model{
   declare images:string[];
   declare highest_bid:number;
   declare minimum_increment:number;
+  declare sold_status: string;
+  declare sold_item:number;
+  declare reserve_price:number;
 }
 
 Auction.init({
@@ -39,8 +42,8 @@ Auction.init({
   },
   status: {
     type: DataTypes.ENUM,
-    values: [ 'sold','unsold','active' ],
-    defaultValue: 'unsold'
+    values: [ 'active','closed' ],
+    defaultValue: 'closed'
   },
   images: {
     type: DataTypes.ARRAY(DataTypes.STRING),
@@ -50,6 +53,18 @@ Auction.init({
   },
   minimum_increment: {
     type: DataTypes.INTEGER
+  },
+  sold_status: {
+    type: DataTypes.ENUM,
+    values: [ 'sold','unsold' ],
+    defaultValue: 'unsold'
+  },
+  sold_item: {
+    type: DataTypes.INTEGER
+  },
+  reserve_price: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
   }
 },{
   sequelize,
@@ -58,6 +73,10 @@ Auction.init({
 
 User.hasMany(Auction,{
   foreignKey: 'sellerID'
+});
+
+User.hasOne(Auction,{
+  foreignKey: 'sold_item'
 });
 
 export default Auction;

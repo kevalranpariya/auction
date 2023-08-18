@@ -66,7 +66,7 @@ export default class AuctionController{
       await Bid.prototype.bidChecker(req.body);
       const addBid = await Bid.create(req.body);
       stopBidTimer;
-      setBidTimer(itemID);
+      // setBidTimer(itemID);
       SUCCESS(req,res,addBid);
     } catch (err) {
       return next(err);

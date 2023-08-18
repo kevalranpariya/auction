@@ -52,7 +52,7 @@ Bid.prototype.bidChecker = async value=>{
   const { highest_bid, minimum_increment, time_end }:any = findItem;
   const minimumAcceptableBid:number = highest_bid+minimum_increment;
   if(minimumAcceptableBid < price){
-    itemTimeIncrease(time_end, itemID);
+    // itemTimeIncrease(time_end, itemID);
     await Auction.update({ highest_bid: price }, { where: { id: itemID }});
   }
   else throw new errHelper(errorTypes.bad_request,

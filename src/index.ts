@@ -17,12 +17,6 @@ import cors from 'cors';
 import path from 'node:path';
 autoSchedule();
 // import { EventEmitter } from 'events';
-
-// const emitter = new EventEmitter();
-// emitter.emit('notification','Time increase');
-// emitter.on('notification',(mes:any)=>{
-//   console.log('messs');
-// });
 const { SERVER_IP,PORT }:any = process.env;
 config();
 class app{

@@ -9,5 +9,6 @@ export default (route:Router):Router=>{
   route.put('/profileUpdate',checkRole([ 'User','Seller' ]),upload.single('avatar'),userController.profileUpdate);
   route.delete('/deleteProfile',checkRole([ 'User','Seller' ]), userController.deleteProfile);
   route.get('/allAuctionItem',userController.allAuctionItem);
+  route.get('/auctionItem/:id', userController.auctionItem);
   return route;
 };

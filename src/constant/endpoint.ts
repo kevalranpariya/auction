@@ -1,4 +1,5 @@
 export enum endpoint {
   USER = '/user',
-  AUCTION = '/auction'
+  AUCTION = '/auction',
+  REVIEW = '/review'
 };

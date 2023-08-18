@@ -64,4 +64,17 @@ export default class UserController{
     }
 
   };
+
+  auctionItem =async (req:Request,res:Response,next:NextFunction) => {
+    try {
+      const { id } = req.params;
+      const auctionItem = await Auction.findOne({ where: {
+        id: id,
+        status: 'active'
+      }});
+      return SUCCESS(req,res,auctionItem);
+    } catch (err) {
+      return next(err);
+    }
+  };
 }
