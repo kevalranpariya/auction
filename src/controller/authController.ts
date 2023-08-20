@@ -1,11 +1,11 @@
 import { Request, Response,NextFunction } from 'express';
 import User from '../models/User';
 import { SUCCESS } from '../middleware/responseHandling';
-import emailSender from '../middleware/emailSender';
+import emailSender from '../utils/emailSender';
 import { verify } from 'jsonwebtoken';
 import errHelper from '../utils/errorHelper';
 import errorTypes from '../utils/errorTypes';
-import accountCheck from '../middleware/accountCheck';
+import accountCheck from '../utils/accountCheck';
 
 export default class AuthController{
   register = async(req:Request,res:Response,next:NextFunction)=>{

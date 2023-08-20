@@ -20,7 +20,6 @@ export default async()=>{
 
   scheduleJob('*/1 * * * * *',async()=>{
     const time = moment(new Date()).format('YYYY-MM-DD HH:mm:ss');
-    console.log(time);
     const findAuction = await Auction.findAll({ where: {
       time_end: time,
     }});
@@ -37,9 +36,6 @@ export default async()=>{
         });
         const { userID }:any = allBid;
         await closeAuction(e.id, userID);
-        // e.sold_item = userID;
-        // e.status = 'closed';
-        // e.save();
       });
     }
   });

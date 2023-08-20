@@ -14,6 +14,7 @@ class User extends Model{
   declare role:string;
   declare payment:string;
   declare token:string;
+  declare public_id_image:string;
 }
 
 User.init({
@@ -83,7 +84,8 @@ User.init({
   },
   token: {
     type: DataTypes.STRING
-  }
+  },
+  public_id_image: DataTypes.STRING
 },{
   sequelize,
   tableName: 'User'

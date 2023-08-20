@@ -18,12 +18,12 @@ Review.init({
     autoIncrement: true,
     allowNull: false
   },
-  score: {
+  star: {
     type: DataTypes.INTEGER,
     allowNull: false,
   },
   text: {
-    type: DataTypes.STRING()
+    type: DataTypes.STRING
   },
   userID: {
     type: DataTypes.INTEGER,
@@ -35,7 +35,13 @@ Review.init({
   }
 },{
   sequelize,
-  tableName: 'Review'
+  tableName: 'Review',
+  indexes: [
+    {
+      unique: true,
+      fields: [ 'userID','itemID' ]
+    }
+  ]
 });
 
 User.hasMany(Review,{

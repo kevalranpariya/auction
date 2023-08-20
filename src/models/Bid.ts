@@ -4,7 +4,8 @@ import User from './User';
 import Auction from './Auction';
 import errHelper from '../utils/errorHelper';
 import errorTypes from '../utils/errorTypes';
-import { itemTimeIncrease } from '../middleware/bidTimerHandler';
+import { itemTimeIncrease } from '../utils/bidTimerHandler';
+import { Socket } from 'socket.io';
 
 class Bid extends Model{
   declare id:number;
@@ -46,17 +47,28 @@ Auction.hasMany(Bid,{
   foreignKey: 'itemID'
 });
 
-Bid.prototype.bidChecker = async value=>{
-  const { itemID, price } = value;
-  const findItem = await Auction.findByPk(itemID,{ attributes: [ 'highest_bid','minimum_increment','time_end' ] });
-  const { highest_bid, minimum_increment, time_end }:any = findItem;
-  const minimumAcceptableBid:number = highest_bid+minimum_increment;
-  if(minimumAcceptableBid < price){
-    // itemTimeIncrease(time_end, itemID);
-    await Auction.update({ highest_bid: price }, { where: { id: itemID }});
+Bid.prototype.bidChecker = async (value:any)=>{
+  let socket = globalSocket
+  const findItem = await Auction.findByPk(value.itemID,{ attributes: [ 'highest_bid','minimum_increment','time_end','status' ] });
+  const { highest_bid, minimum_increment, time_end,status } = findItem as Auction;
+  if(status == 'closed'){
+    return socket.emit('notification','Auctions is closed');
   }
-  else throw new errHelper(errorTypes.bad_request,
-    `Bid must be at least ${minimum_increment} rupees higher than the current highest bid.`);
+
+  const findUserBid = await Bid.findOne({ where: {
+    itemID: value.itemID,
+    userID: value.userID
+  }});
+  const minimumAcceptableBid:number = highest_bid+minimum_increment;
+  if(minimumAcceptableBid < value.price){
+    if(!findUserBid){
+      await Bid.create(value);
+    }else await Bid.update({ price: value.price },{ where: { id: findUserBid?.id }});
+
+    itemTimeIncrease(time_end, value.itemID,socket);
+    await Auction.update({ highest_bid: value.price }, { where: { id: value.itemID }});
+  }
+  else return socket.emit('notification',`Bid must greater than ${minimumAcceptableBid}`);
 };
 
 export default Bid;

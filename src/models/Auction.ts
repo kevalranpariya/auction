@@ -11,7 +11,7 @@ class Auction extends Model{
   declare status:string;
   declare time_start:string;
   declare time_end:string;
-  declare images:string[];
+  declare images:Array<{url: string, public_id: string }>;
   declare highest_bid:number;
   declare minimum_increment:number;
   declare sold_status: string;
@@ -46,7 +46,7 @@ Auction.init({
     defaultValue: 'closed'
   },
   images: {
-    type: DataTypes.ARRAY(DataTypes.STRING),
+    type: DataTypes.JSONB,
   },
   highest_bid: {
     type: DataTypes.INTEGER,

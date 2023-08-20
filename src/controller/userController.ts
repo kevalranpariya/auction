@@ -8,7 +8,7 @@ export default class UserController{
 
   userProfile =async (req:Request,res:Response,next:NextFunction) => {
     try {
-      const { id }:number | any = req.user;
+      const { id } = req.user as User;
       const userDetail = await User.findByPk(id,{ attributes: [ 'id','username','role','email' ] });
       return SUCCESS(req,res,userDetail);
     } catch (err) {
@@ -18,11 +18,19 @@ export default class UserController{
 
   profileUpdate =async (req:Request,res:Response,next:NextFunction) => {
     try {
-      // console.log(req.file)
+      const { id } = req.user as User;
+      const findUser = await User.findByPk(id);
       if(req.file){
-        req.body.avatar = req.file.path;
+        const filePath = req.file?.path as string;
+        if(findUser?.avatar){
+          await cloudInary.uploader.destroy(findUser?.public_id_image as string);
+        }
+        const imageStore = await cloudInary.uploader.upload(filePath);
+        if(imageStore){
+          req.body.avatar = imageStore.url;
+          req.body.public_id_image = imageStore.public_id;
+        }
       }
-      const { id }:number | any = req.user;
       await User.update(req.body,{
         where: {
           id
@@ -36,19 +44,17 @@ export default class UserController{
 
   deleteProfile =async (req:Request,res:Response,next:NextFunction) => {
     try {
-      // const { id }:number| any = req.user;
-      // const findUser = await User.findByPk(id);
-      // const avatar = findUser?.avatar;
-      // if(avatar){
-      //   // const imageURL = await avatar.split('/');
-      //   // const publicID = imageURL[imageURL.length-1];
-      // }
-
-      // await User.destroy({
-      //   where: {
-      //     id: id
-      //   }
-      // });
+      const { id } = req.user as User;
+      const findUser = await User.findByPk(id);
+      const avatar = findUser?.avatar;
+      if(avatar){
+        cloudInary.uploader.destroy(findUser.public_id_image);
+      }
+      await User.destroy({
+        where: {
+          id: id
+        }
+      });
       return SUCCESS(req,res);
     } catch (err) {
       return next(err);

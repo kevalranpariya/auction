@@ -1,8 +1,8 @@
 import { compareSync } from 'bcrypt';
 import User from '../models/User';
-import errHelper from '../utils/errorHelper';
-import errorTypes from '../utils/errorTypes';
-import { generateToken } from '../config/auth';
+import errHelper from './errorHelper';
+import errorTypes from './errorTypes';
+import { generateToken } from '../config/authGenerates';
 
 export default async (data:any)=>{
   const { email, password } = data;
