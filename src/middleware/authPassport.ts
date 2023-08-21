@@ -5,6 +5,7 @@ import User from '../models/User';
 import { Request } from 'express';
 import errHelper from '../utils/errorHelper';
 import errorTypes from '../utils/errorTypes';
+import { notFoundMessage } from '../utils/messages';
 config();
 
 interface UserInterface{
@@ -14,10 +15,10 @@ interface UserInterface{
     email: string
 }
 
-const { Scerat } = process.env;
+const { SECRET } = process.env;
 passport.use('userAuth',new Strategy({
   jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-  secretOrKey: Scerat,
+  secretOrKey: SECRET,
   passReqToCallback: true
 },async(req:Request,user:UserInterface,done:VerifiedCallback)=>{
   try {
@@ -29,7 +30,7 @@ passport.use('userAuth',new Strategy({
       return done(null, findUser ?? false);
     }
     else {
-      throw new errHelper(errorTypes.unauthorized, 'Invalid Token');
+      throw new errHelper(errorTypes.unauthorized, notFoundMessage('Token'));
     }
   } catch (err) {
     done(err,false);

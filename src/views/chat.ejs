@@ -61,7 +61,7 @@
                 const token = localStorage.getItem('authToken');
                 const headers = new Headers();
                 headers.append("Authorization", `Bearer ${token}`);
-                const response = await fetch(`http://192.168.1.4:4600/user/auctionItem/${itemID}`, {
+                const response = await fetch(`http://192.168.2.35:4600/user/auctionItem/${itemID}`, {
                     method: "GET",
                     headers: headers
                 });
@@ -122,10 +122,6 @@
         socket.on('itemSold',(message)=>{
             displayMessage(message);
         })
-        
-        // socket.on("message", (data) => {
-        //     displayMessage(`${data.username}: ${data.message}`);
-        // });
         const chatForm = document.getElementById("chatForm");
         const messageInput = document.getElementById("message");
         var item = 0;

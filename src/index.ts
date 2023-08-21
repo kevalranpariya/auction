@@ -8,16 +8,14 @@ import './middleware/authPassport';
 import passport from 'passport';
 import './config/cloudinary';
 import './models/Auction';
-import './utils/dateFormat';
 import autoSchedule from './middleware/autoSchedule';
 import './models/Bid';
 import SocketIO from './socket.io';
 import { createServer,Server } from 'node:http';
 import cors from 'cors';
 import path from 'node:path';
-autoSchedule();
-// import { EventEmitter } from 'events';
 const { SERVER_IP,PORT }:any = process.env;
+autoSchedule();
 config();
 class app{
   private server:Express;

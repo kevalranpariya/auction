@@ -1,10 +1,12 @@
 import moment from 'moment';
 import Auction from '../models/Auction';
 import closeAuction from './closeAuction';
+import { getGlobalSocket } from './globalSocket';
+import { Socket } from 'socket.io';
 
 let setTimer:NodeJS.Timeout;
-
-export const setBidTimer = (itemID:number, user:any, socket:any)=>{
+export const setBidTimer = (itemID:number, user:any)=>{
+  const socket: Socket | any = getGlobalSocket();
   setTimer = setTimeout(async()=>{
     if (await closeAuction(itemID, user.id)) {
       socket.to(`item-${itemID}`).emit('itemSold', `This ${itemID} is sold ${user.id}`);
@@ -16,7 +18,8 @@ export const stopBidTimer = ()=>{
   clearTimeout(setTimer);
 };
 
-export const itemTimeIncrease = async(time_end:string,itemID:number,socket:any)=>{
+export const itemTimeIncrease = async(time_end:string,itemID:number)=>{
+  const socket: Socket | any = getGlobalSocket();
   const endDate:Date | any = new Date(time_end);
   const time = moment(new Date()).format('YYYY-MM-DD HH:mm:ss');
   const currentDate:Date| any = new Date(time);

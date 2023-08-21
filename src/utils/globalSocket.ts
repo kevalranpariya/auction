@@ -1,6 +1,11 @@
 import { Socket } from 'socket.io';
 
+let globalSocket: Socket | null = null;
 
 export function setGlobalSocket(socket: Socket) {
-return const globalSocket = socket;
+  globalSocket = socket;
+}
+
+export function getGlobalSocket() {
+  return globalSocket;
 }

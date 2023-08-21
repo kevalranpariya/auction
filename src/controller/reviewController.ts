@@ -5,6 +5,7 @@ import errorTypes from '../utils/errorTypes';
 import Review from '../models/Review';
 import { SUCCESS } from '../middleware/responseHandling';
 import User from '../models/User';
+import { notFoundMessage } from '../utils/messages';
 
 class ReviewController{
   createReview = async(req:Request,res:Response,next:NextFunction)=>{
@@ -17,7 +18,7 @@ class ReviewController{
           id: itemID
         }
       });
-      if(!findUserItem) throw new errHelper(errorTypes.not_found,'Item not found');
+      if(!findUserItem) throw new errHelper(errorTypes.not_found,notFoundMessage('Item'));
       req.body.userID = id;
       const addReview = await Review.create(req.body);
       return SUCCESS(req,res,addReview);

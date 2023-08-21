@@ -6,7 +6,8 @@ config();
 const { EMAIL } = process.env;
 
 export default async(data:any)=>{
-  const verifyToken = await sign(data,'VerifyToken',{ expiresIn: '10m' });
+  const { SECRET }:any = process.env;
+  const verifyToken = await sign(data,SECRET,{ expiresIn: '10m' });
   mailTransport.sendMail({
     from: EMAIL,
     to: data.email,

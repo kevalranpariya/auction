@@ -1,11 +1,15 @@
 import { v2 as cloudInary } from 'cloudinary';
+import { config } from 'dotenv';
 import { Request } from 'express';
 import multer from 'multer';
+config();
+
+const { CLOUD_NAME, CLOUD_API_KEY,CLOUD_API_SECRET } = process.env;
 
 cloudInary.config({
-  cloud_name: 'dmqp7upjv',
-  api_key: '499928582221999',
-  api_secret: 'vMhAR7XI2OQM8UcIcfEBKNcyIbc'
+  cloud_name: CLOUD_NAME,
+  api_key: CLOUD_API_KEY,
+  api_secret: CLOUD_API_SECRET
 });
 
 const fileFilter = (req:Request, file:any, cb:any) => {

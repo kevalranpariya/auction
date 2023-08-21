@@ -6,7 +6,9 @@ import { verify } from 'jsonwebtoken';
 import errHelper from '../utils/errorHelper';
 import errorTypes from '../utils/errorTypes';
 import accountCheck from '../utils/accountCheck';
-
+import { config } from 'dotenv';
+import { notFoundMessage } from '../utils/messages';
+config();
 export default class AuthController{
   register = async(req:Request,res:Response,next:NextFunction)=>{
     try {
@@ -22,14 +24,15 @@ export default class AuthController{
   verifyAccount =async (req:Request,res:Response,next:NextFunction) => {
     try {
       const { token } = req.params;
-      const verifyToken = await verify(token,'VerifyToken');
-      const { id }:any = verifyToken;
+      const { SECRET }:any = process.env;
+      const verifyToken = await verify(token,SECRET);
+      const { id } = verifyToken as User;
 
       const verifyAccount = await User.findByPk(id);
       if(verifyAccount){
         verifyAccount.verify = true;
         verifyAccount.save();
-      }else throw new errHelper(errorTypes.not_found,'Account Not Found');
+      }else throw new errHelper(errorTypes.not_found, notFoundMessage('Account'));
       SUCCESS(req,res);
     } catch (err) {
       return next(err);

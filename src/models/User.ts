@@ -1,6 +1,7 @@
 import { DataTypes, Model } from 'sequelize';
 import sequelize from '../config/sequelize';
 import { hashSync } from 'bcrypt';
+import { notAssignMessage } from '../utils/messages';
 
 class User extends Model{
   declare id:number;
@@ -29,7 +30,7 @@ User.init({
     allowNull: false,
     unique: {
       name: 'UsernameUniqueConstraint',
-      msg: 'Username must be unique'
+      msg: notAssignMessage('username')
     }
   },
   email: {
@@ -37,7 +38,7 @@ User.init({
     allowNull: false,
     unique: {
       name: 'EmailUniqueConstraint',
-      msg: 'Email address must be unique',
+      msg: notAssignMessage('email'),
     },
     validate: {
       isEmail: true
@@ -63,7 +64,7 @@ User.init({
     type: DataTypes.BIGINT,
     unique: {
       name: 'numberUniqueConstraint',
-      msg: 'Number already exits'
+      msg: notAssignMessage('Number')
     },
     validate: {
       set(value:any) {

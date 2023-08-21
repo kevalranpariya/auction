@@ -5,6 +5,7 @@ import errHelper from '../utils/errorHelper';
 import errorTypes from '../utils/errorTypes';
 import User from '../models/User';
 import { v2 as cloudInary } from 'cloudinary';
+import { somethingWrong } from '../utils/messages';
 export default class AuctionController{
   addItem =async (req:Request,res:Response,next:NextFunction) => {
     try {
@@ -54,7 +55,7 @@ export default class AuctionController{
     }
   };
 
-  deleleItem =async (req:Request,res:Response,next:NextFunction) => {
+  deleteItem =async (req:Request,res:Response,next:NextFunction) => {
     try {
       const { itemId } = req.params;
       const { id } = req.user as User;
@@ -70,7 +71,7 @@ export default class AuctionController{
           sellerID: id
         }
       });
-      if(!destroyItem) throw new errHelper(errorTypes.bad_request,'something went wrong');
+      if(!destroyItem) throw new errHelper(errorTypes.bad_request,somethingWrong);
       return SUCCESS(req,res);
     } catch (err) {
       return next(err);

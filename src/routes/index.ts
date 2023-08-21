@@ -8,12 +8,6 @@ import checkRole from '../middleware/checkRole';
 import reviewRoutes from './reviewRoutes';
 
 export default (server:Express)=>{
-  server.get('/userLogin',(req,res)=>{
-    res.render('login');
-  });
-  server.get('/chat',(req,res)=>{
-    res.render('chat');
-  });
   server.use('/', authRoutes(Router()));
   server.use(endpoint.USER, passport.authenticate('userAuth',{ session: false }),userRoutes(Router()));
   server.use(endpoint.AUCTION, passport.authenticate('userAuth',{ session: false }), auctionRoutes(Router()));

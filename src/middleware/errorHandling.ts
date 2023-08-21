@@ -1,6 +1,7 @@
 import statusCode from '../constant/statusCode';
 import errorTypes from '../utils/errorTypes';
 import { NextFunction, Request, Response } from 'express';
+import { somethingWrong } from '../utils/messages';
 const errorResponse = (err:any, req: Request, res: Response) => {
   return res.status(err.statusCode).json({
     statusCode: err.statusCode,
@@ -27,6 +28,7 @@ export default (err: any, req: Request, res: Response, next: NextFunction) => {
       return errorResponse(err, req, res);
     default:
       err.statusCode = statusCode.BAD_REQUEST;
+      err.message = somethingWrong;
       return errorResponse(err, req, res);
       next(err);
   }
